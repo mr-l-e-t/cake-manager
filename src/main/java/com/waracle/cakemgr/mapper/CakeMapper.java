@@ -10,4 +10,5 @@ public interface CakeMapper {
 
     CakeMapper INSTANCE = Mappers.getMapper(CakeMapper.class);
     CakeDTO toCakeDTO(CakeEntity cakeEntity);
+    CakeEntity toCakeEntity(CakeDTO cakeDTO);
 }

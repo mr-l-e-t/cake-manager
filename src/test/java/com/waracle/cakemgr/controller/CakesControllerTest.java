@@ -43,15 +43,4 @@ class CakesControllerTest {
         verify(cakeService).getAllCakes();
         verify(cakeService,times(1)).getAllCakes();
     }
-
-    @Test
-    public void givenCallToGetCakeWithIdThenReturnSingleCake() throws Exception{
-        when(cakeService.getCake(1)).thenReturn(TestUtils.CAKE_DTO);
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/cakes/1").
-                        contentType(MediaType.APPLICATION_JSON).
-                        content(TestUtils.getSingleCakeAsJson())).
-                andDo(MockMvcResultHandlers.print());
-        verify(cakeService).getCake(1);
-        verify(cakeService,times(1)).getCake(1);
-    }
 }

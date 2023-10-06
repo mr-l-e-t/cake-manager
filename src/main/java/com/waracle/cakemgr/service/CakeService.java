@@ -9,4 +9,6 @@ public interface CakeService {
     List<CakeDTO> getAllCakes();
 
     CakeDTO getCake(int id);
+
+    CakeDTO save(CakeDTO cakeToSave);
 }

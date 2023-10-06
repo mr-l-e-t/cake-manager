@@ -39,7 +39,12 @@ public class CakeServiceTest {
     private List<CakeEntity> cakeEntitiesThatWillBeRetrievedFromRepository;
     private List<CakeDTO> cakeDTOsExpectedFromService;
     private CakeDTO cakeDTOExpectedFromService;
+
+    private CakeDTO cakeDTOToBeSavedInCreateCake;
+
     private CakeEntity cakeEntityThatWillBeRetrievedFromRepository;
+
+    private CakeEntity cakeEntityToBeSavedInCreateCake;
 
     private static final int CAKE_ID = 1;
 
@@ -47,15 +52,20 @@ public class CakeServiceTest {
     public void setUp(){
         cakeEntitiesThatWillBeRetrievedFromRepository = TestUtils.TWO_CAKE_ENTITY_LIST_WITH_ID;
         cakeEntityThatWillBeRetrievedFromRepository = TestUtils.CAKE_ENTITY;
+        cakeEntityToBeSavedInCreateCake = TestUtils.CAKE_ENTITY_WITH_NO_ID;
+
         cakeDTOsExpectedFromService = TestUtils.TWO_CAKE_LIST_WITH_ID;
         cakeDTOExpectedFromService = TestUtils.CAKE_DTO;
+        cakeDTOToBeSavedInCreateCake=  TestUtils.CAKE_DTO_WITH_NO_ID;
     }
     @AfterEach
     public void tearDown(){
         cakeEntitiesThatWillBeRetrievedFromRepository = null;
         cakeEntityThatWillBeRetrievedFromRepository = null;
+        cakeEntityToBeSavedInCreateCake =null;
         cakeDTOsExpectedFromService = null;
         cakeDTOExpectedFromService=null;
+        cakeDTOToBeSavedInCreateCake=null;
     }
 
     @Test
@@ -88,5 +98,19 @@ public class CakeServiceTest {
         assertEquals(cakeDTOExpectedFromService,cakeFromService);
 
         verify(cakeRepository,times(1)).getReferenceById(CAKE_ID);
+    }
+
+    @Test
+    public void givenCreateCakeThenReturnCreatedCake(){
+        //given
+        when(cakeRepository.save(any(CakeEntity.class))).thenReturn(cakeEntityThatWillBeRetrievedFromRepository);
+        when(cakeMapper.toCakeEntity(any(CakeDTO.class))).thenReturn(cakeEntityToBeSavedInCreateCake);
+        when(cakeMapper.toCakeDTO(any(CakeEntity.class))).thenReturn(cakeDTOExpectedFromService);
+
+        //then return single cake
+        CakeDTO savedCake = cakeService.save(cakeDTOToBeSavedInCreateCake);
+        assertEquals(cakeDTOExpectedFromService,savedCake);
+
+        verify(cakeRepository,times(1)).save(cakeEntityToBeSavedInCreateCake);
     }
 }

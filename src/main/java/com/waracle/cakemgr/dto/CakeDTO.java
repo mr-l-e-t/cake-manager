@@ -11,7 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CakeDTO {
     private Integer id;
+
     private String title;
+
     private String imageURL;
+
     private String description;
 }

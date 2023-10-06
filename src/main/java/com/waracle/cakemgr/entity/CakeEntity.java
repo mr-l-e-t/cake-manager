@@ -17,10 +17,10 @@ public class CakeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false, length = 250)
     private String title;
-    @Column(name = "image_url", nullable = false)
+    @Column(name = "image_url", nullable = false, length = 1000)
     private String imageURL;
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, length = 1000)
     private String description;
 }
