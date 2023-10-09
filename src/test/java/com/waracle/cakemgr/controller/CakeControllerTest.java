@@ -1,5 +1,6 @@
 package com.waracle.cakemgr.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.waracle.cakemgr.TestUtils;
 import com.waracle.cakemgr.dto.CakeDTO;
 import com.waracle.cakemgr.service.CakeService;
@@ -77,5 +78,16 @@ public class CakeControllerTest {
                 andDo(MockMvcResultHandlers.print());
         verify(cakeService).update(TestUtils.CAKE_DTO);
         verify(cakeService,times(1)).update(TestUtils.CAKE_DTO);
+    }
+
+    @Test
+    public void givenCallToDeleteCakeThenDeleteCake() throws Exception {
+        doNothing().when(cakeService).delete(1);
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/cake/1").
+                        contentType(MediaType.APPLICATION_JSON).
+                        content(TestUtils.getSingleCakeAsJson())).
+                andDo(MockMvcResultHandlers.print());
+        verify(cakeService).delete(1);
+        verify(cakeService,times(1)).delete(1);
     }
 }

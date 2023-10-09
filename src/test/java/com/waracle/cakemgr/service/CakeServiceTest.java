@@ -131,4 +131,15 @@ public class CakeServiceTest {
 
         verify(cakeRepository,times(1)).save(cakeEntityThatWillBeRetrievedFromRepository);
     }
+
+    @Test
+    public void givenDeleteCakeThenDeleteCake(){
+        //given
+        doNothing().when(cakeRepository).deleteById(CAKE_ID);
+
+        //then return single cake
+        cakeService.delete(CAKE_ID);
+
+        verify(cakeRepository,times(1)).deleteById(CAKE_ID);
+    }
 }

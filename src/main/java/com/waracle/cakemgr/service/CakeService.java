@@ -12,4 +12,6 @@ public interface CakeService {
     CakeDTO save(CakeDTO cakeToSave);
 
     CakeDTO update(CakeDTO cakeToUpdate);
+
+    void delete(int id);
 }

@@ -54,4 +54,9 @@ public class CakeServiceImpl implements CakeService {
 
         return cakeMapper.toCakeDTO(cakeFromDB);
     }
+
+    @Override
+    public void delete(int id) {
+        cakeRepository.deleteById(id);
+    }
 }

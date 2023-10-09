@@ -66,4 +66,16 @@ public class CakeController {
         cakeManagerValidator.validateCake(cakeToUpdate, CakeAction.UPDATE);
         return new ResponseEntity<>(cakeService.update(cakeToUpdate), HttpStatus.OK);
     }
+
+    @DeleteMapping(value="/{id}")
+    @Operation(description = "Delete a single cake")
+    @ApiResponse(responseCode = "204", content = @Content())
+    @ApiResponse(responseCode = "400", description = "Bad Request.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDTO.class)))
+    @ApiResponse(responseCode = "404", description = "Not Found.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDTO.class)))
+    public ResponseEntity<Void> deleteCake(@PathVariable() Integer id){
+        log.info("delete cake with id: {}", id);
+        cakeService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

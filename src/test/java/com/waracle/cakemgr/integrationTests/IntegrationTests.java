@@ -226,4 +226,24 @@ public class IntegrationTests {
                 .andExpect(content().string(TestUtils.getNotFoundErrorPayloadAsJson()));
     }
 
+    @Test
+    public void givenCallToDeleteCakeEndpointThenDeleteCakeAndReturn204() throws Exception {
+        //given
+        doNothing().when(cakeRepository).deleteById(1);
+
+        //when
+        RequestBuilder request = MockMvcRequestBuilders
+                .delete("/api/cake/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
+        //then
+        mockMvc.perform(request)
+                .andExpect(status().isNoContent());
+        //and then
+        ArgumentCaptor<Integer> capturedTransaction = ArgumentCaptor.forClass(Integer.class);
+
+        Mockito.verify(cakeRepository).deleteById(capturedTransaction.capture());
+        assertEquals(1, capturedTransaction.getValue());
+    }
+
 }
