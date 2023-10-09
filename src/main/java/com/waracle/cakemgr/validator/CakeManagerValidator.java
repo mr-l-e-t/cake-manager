@@ -14,13 +14,20 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CakeManagerValidator {
 
-    public Optional<Void> validateCakeCreation(CakeDTO cakeDTO) throws CakeManagerException {
+    public Optional<Void> validateCake(CakeDTO cakeDTO, CakeAction cakeAction) throws CakeManagerException {
         StringBuilder errorMessage = new StringBuilder();
+        if (cakeAction == CakeAction.CREATE && cakeDTO.getId() != null ) {
+                log.error("No Id should be present when creating a cake object. ");
+                errorMessage.append("No Id should be present when creating a cake object. ");
+        } else if (cakeAction == CakeAction.UPDATE && cakeDTO.getId() == null) {
+            log.error("Id is required. ");
+            errorMessage.append("Id is required. ");
+        }
+
         if (Strings.isNullOrEmpty(cakeDTO.getTitle())) {
             log.error("Title is required. ");
             errorMessage.append("Title is required. ");
         }
-
         if (Strings.isNullOrEmpty(cakeDTO.getDescription())) {
             log.error("Description is required. ");
             errorMessage.append("Description is required. ");
@@ -29,6 +36,7 @@ public class CakeManagerValidator {
             log.error("ImageUrl is required. ");
             errorMessage.append("ImageUrl is required. ");
         }
+
         if (!errorMessage.isEmpty()) {
             throw new CakeManagerException(errorMessage.toString());
         }

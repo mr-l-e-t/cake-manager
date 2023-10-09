@@ -2,7 +2,6 @@ package com.waracle.cakemgr.controller;
 
 import com.waracle.cakemgr.dto.CakeDTO;
 import com.waracle.cakemgr.dto.ErrorDTO;
-import com.waracle.cakemgr.entity.CakeEntity;
 import com.waracle.cakemgr.service.CakeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 @Slf4j
 @RequiredArgsConstructor

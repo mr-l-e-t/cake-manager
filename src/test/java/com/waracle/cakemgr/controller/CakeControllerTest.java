@@ -3,6 +3,7 @@ package com.waracle.cakemgr.controller;
 import com.waracle.cakemgr.TestUtils;
 import com.waracle.cakemgr.dto.CakeDTO;
 import com.waracle.cakemgr.service.CakeService;
+import com.waracle.cakemgr.validator.CakeAction;
 import com.waracle.cakemgr.validator.CakeManagerValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,7 +57,7 @@ public class CakeControllerTest {
     public void givenCallToCreateCakeThenReturnCakeWithID() throws Exception{
 
         when(cakeService.save(any(CakeDTO.class))).thenReturn(TestUtils.CAKE_DTO);
-        when(cakeManagerValidator.validateCakeCreation(any(CakeDTO.class))).thenReturn(Optional.empty());
+        when(cakeManagerValidator.validateCake(any(CakeDTO.class), any(CakeAction.class))).thenReturn(Optional.empty());
         mockMvc.perform(MockMvcRequestBuilders.post("/api/cake").
                         contentType(MediaType.APPLICATION_JSON).
                         content(TestUtils.getSingleCakeAsJson())).
@@ -65,4 +66,16 @@ public class CakeControllerTest {
         verify(cakeService,times(1)).save(TestUtils.CAKE_DTO);
     }
 
+    @Test
+    public void givenCallToUpdateCakeThenUpdateCake() throws Exception {
+
+        when(cakeService.update(any(CakeDTO.class))).thenReturn(TestUtils.CAKE_DTO);
+//        when(cakeManagerValidator.validateCakeUpdate(any(CakeDTO.class))).thenReturn(Optional.empty());
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/cake").
+                        contentType(MediaType.APPLICATION_JSON).
+                        content(TestUtils.getSingleCakeAsJson())).
+                andDo(MockMvcResultHandlers.print());
+        verify(cakeService).update(TestUtils.CAKE_DTO);
+        verify(cakeService,times(1)).update(TestUtils.CAKE_DTO);
+    }
 }

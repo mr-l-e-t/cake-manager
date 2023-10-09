@@ -40,13 +40,22 @@ public class TestUtils {
         return asJsonString(ErrorDTO.builder().code(HttpStatus.BAD_REQUEST.toString()).message("The provided value 'aaa' is the incorrect type for the 'id' parameter.").build());
     }
 
-    public static String getInternalServerErrorValidationErrorPayloadAsJson() throws JsonProcessingException {
+    public static String getInternalServerErrorValidationErrorIDPresentInCakeObjectAsJson() throws JsonProcessingException {
+        return asJsonString(ErrorDTO.builder().code(HttpStatus.INTERNAL_SERVER_ERROR.toString()).message("No Id should be present when creating a cake object. ").build());
+    }
+
+    public static String getInternalServerErrorValidationErrorMissingTitleAsJson() throws JsonProcessingException {
         return asJsonString(ErrorDTO.builder().code(HttpStatus.INTERNAL_SERVER_ERROR.toString()).message("Title is required. ").build());
     }
 
     public static String getInternalServerErrorJson() throws JsonProcessingException {
         return asJsonString(ErrorDTO.builder().code(HttpStatus.INTERNAL_SERVER_ERROR.toString()).message("We have encountered an error. Please try again later.").build());
     }
+
+    public static String getInternalServerErrorNoIDInCakeObjectErrorPayloadAsJson() throws JsonProcessingException {
+        return asJsonString(ErrorDTO.builder().code(HttpStatus.INTERNAL_SERVER_ERROR.toString()).message("Id is required. ").build());
+    }
+
     public static String asJsonString(final Object obj) throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(obj);
     }
