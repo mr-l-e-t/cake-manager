@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  cakemanager-service:
+    image: cakemanager:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=dev"
+    networks:
+      backend:
+        aliases:
+          - "cakemanager-service"
+networks:
+  backend:
+    driver: bridge
