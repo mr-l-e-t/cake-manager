@@ -77,5 +77,4 @@ public class CakeController {
         cakeService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 }
