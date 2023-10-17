@@ -121,7 +121,7 @@ public class IntegrationTests {
     }
 
     @Test
-    public void givenCallToCreateCakeEndpointWithJsonCakeWithIDThenReturn500Error() throws Exception {
+    public void givenCallToCreateCakeEndpointWithJsonCakeWithIDThenReturn500Code() throws Exception {
         CakeDTO cakeWithID = TestUtils.CAKE_DTO;
         RequestBuilder request = MockMvcRequestBuilders
                 .post("/api/cake")
@@ -135,7 +135,7 @@ public class IntegrationTests {
                 .andExpect(content().string(TestUtils.getInternalServerErrorValidationErrorIDPresentInCakeObjectAsJson()));;
     }
     @Test
-    public void givenCallToCreateCakeEndpointWithJsonCakeWithNoTitleThenReturn500Error() throws Exception {
+    public void givenCallToCreateCakeEndpointWithJsonCakeWithNoTitleThenReturn500Code() throws Exception {
         CakeDTO cakeWithNoTitle = TestUtils.CAKE_DTO_WITH_NO_TITLE;
         RequestBuilder request = MockMvcRequestBuilders
                 .post("/api/cake")
@@ -150,11 +150,26 @@ public class IntegrationTests {
     }
 
     @Test
-    public void givenCallToCreateCakeEndpointThenThrowDBErrorAndReturn500Error() throws Exception {
+    public void givenCallToCreateCakeEndpointThenThrowDBErrorAndReturn500Code() throws Exception {
         //given
         CakeDTO cakeToCreate = TestUtils.CAKE_DTO_WITH_NO_ID;
         when(cakeRepository.save(any(CakeEntity.class))).thenThrow(DataIntegrityViolationException.class);
 
+        RequestBuilder request = MockMvcRequestBuilders
+                .post("/api/cake")
+                .content(TestUtils.asJsonString(cakeToCreate))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
+        //then
+        mockMvc.perform(request)
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string(TestUtils.getInternalServerErrorJson()));;
+    }
+    @Test
+    public void givenCallToCreateCakeEndpointThenThrowRuntimeExceptionAndReturn500Code() throws Exception {
+        CakeDTO cakeToCreate = TestUtils.CAKE_DTO_WITH_NO_ID;
+        when(cakeRepository.save(any(CakeEntity.class))).thenThrow(RuntimeException.class);
         RequestBuilder request = MockMvcRequestBuilders
                 .post("/api/cake")
                 .content(TestUtils.asJsonString(cakeToCreate))
@@ -195,7 +210,7 @@ public class IntegrationTests {
     }
 
     @Test
-    public void givenCallToUpdateCakeWithNoIDThenThenReturn500Error() throws Exception {
+    public void givenCallToUpdateCakeWithNoIDThenThenReturn500Code() throws Exception {
         CakeDTO cakeToUpdateWithNoID = TestUtils.CAKE_DTO_WITH_NO_ID;
         RequestBuilder request = MockMvcRequestBuilders
                 .put("/api/cake")

@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://cake-db:5432/cake_mngr_db
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 60000
+      max-lifetime: 3600000
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    database: postgresql
+  sql:
+    init:
+      mode: always
+      platform: postgres

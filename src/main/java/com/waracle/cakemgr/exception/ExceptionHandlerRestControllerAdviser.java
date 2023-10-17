@@ -42,7 +42,7 @@ public class ExceptionHandlerRestControllerAdviser {
     @ExceptionHandler(CakeManagerException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ErrorDTO> handleCakeManagerException(CakeManagerException ex) {
-        log.error("Internal error encountered: ", ex.getMessage());
+        log.error("Internal error encountered: ", ex);
         return getNewErrorResponseWith(HttpStatus.INTERNAL_SERVER_ERROR, String.valueOf(ex.getMessage()));
     }
 
@@ -50,9 +50,8 @@ public class ExceptionHandlerRestControllerAdviser {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ErrorDTO> adviceServiceErrors(RuntimeException ex) {
         log.error("Service is failed due to in internal error:", ex);
-        return getNewErrorResponseWith(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        return getNewErrorResponseWith(HttpStatus.INTERNAL_SERVER_ERROR, "We have encountered an error. Please try again later.");
     }
-
 
 
     private static ResponseEntity<ErrorDTO> getNewErrorResponseWith(HttpStatus status, String errorMessage){
