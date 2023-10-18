@@ -1,3 +1,12 @@
+spring:
+  application:
+    name: cake-manager-service
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+  jpa:
+    show-sql: true
+    defer-datasource-initialization: false #required value for liquibase to work
 management:
   endpoint:
     health:
