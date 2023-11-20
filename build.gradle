@@ -70,5 +70,6 @@ sonar {
         property 'sonar.exclusions', '**/entity/**.java , **/model/**.java , **/dto/**.java'
         property 'sonar.coverage.exclusions', '**/CakeManagerApplication.java'
         property 'sonar.java.coveragePlugin', 'jacoco'
+        property 'sonar.gradle.skipCompile', 'true'
     }
 }

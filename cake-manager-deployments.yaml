@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cake-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cake-manager
+  template: #template for the pods
+    metadata:
+      labels:
+        app: cake-manager
+    spec:
+      containers:
+        - name: cake-manager
+          image: cakemanager:latest
+          imagePullPolicy: Never # this is for local development - it prevents the image from being pulled from a registry
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: minikube
+            - name: SPRING_DATASOURCE_USERNAME
+              value: postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: postgres
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://cake-db:5432/cake_mngr_db
+          ports:
+            - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cake-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cake-db
+  template: #template for the pods
+    metadata:
+      labels:
+        app: cake-db
+    spec:
+      containers:
+        - name: cake-db
+          image: postgres:16
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_DB
+              value: cake_mngr_db
+          ports:
+            - containerPort: 5432
+#          volumeMounts:
+#            - name: postgres-storage
+#              mountPath: /var/lib/postgresql/data
+#      volumes:
+#        - name: postgres-storage
+#          persistentVolumeClaim:
+#            claimName: postgres-pvc

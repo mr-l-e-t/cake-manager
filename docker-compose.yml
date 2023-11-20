@@ -8,8 +8,6 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
       POSTGRES_DB: "cake_mngr_db"
-#    volumes:
-#      - ./db-scripts:/docker-entrypoint-initdb.d
     networks:
       backend:
         aliases:
