@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: cake-manager
-          image: cakemanager:latest
+          image: cake-manager-service-docker-image:2.0.0
           imagePullPolicy: Never # this is for local development - it prevents the image from being pulled from a registry
           env:
             - name: SPRING_PROFILES_ACTIVE
@@ -61,3 +61,30 @@ spec:
 #        - name: postgres-storage
 #          persistentVolumeClaim:
 #            claimName: postgres-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cake-manager
+spec:
+  selector:
+    app: cake-manager
+  type: NodePort
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cake-db
+spec:
+  selector:
+    app: cake-db
+  type: ClusterIP
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
