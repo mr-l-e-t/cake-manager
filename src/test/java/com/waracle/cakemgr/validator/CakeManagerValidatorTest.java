@@ -17,52 +17,49 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 public class CakeManagerValidatorTest {
-
     @Autowired
     @InjectMocks //the annotation will initialize the CakeManagerValidator object with the CakeRepository mock
     private CakeManagerValidator cakeManagerValidator;
 
     @Test
-    public void givenValidateCakeCreationWithFullCakeDTOThenReturnEmptyOptional() {
+    public void givenValidateCakeCreationWithFullCakeDTOThenWorkAsExpected() {
         CakeDTO fullCake = TestUtils.CAKE_DTO_WITH_NO_ID;
-        Optional<Void> isValid = cakeManagerValidator.validateCake(fullCake, CakeAction.CREATE);
-        assertNotNull(isValid);
+        cakeManagerValidator.validate(fullCake, CakeAction.CREATE);
     }
 
     @Test
     public void givenValidateCakeCreationWithCakeIDThenThrowCakeManagerException(){
-        CakeManagerException exception = assertThrows(CakeManagerException.class,() -> cakeManagerValidator.validateCake(TestUtils.CAKE_DTO, CakeAction.CREATE));
+        CakeManagerException exception = assertThrows(CakeManagerException.class,() -> cakeManagerValidator.validate(TestUtils.CAKE_DTO, CakeAction.CREATE));
         assertThat(exception.getMessage()).isEqualTo("No Id should be present when creating a cake object. ");
     }
 
     @Test
     public void givenValidateCakeCreationWithCakeWithNoTitleThenThrowCakeManagerException(){
-        CakeDTO cakeWithNoTitle = TestUtils.CAKE_DTO_WITH_NO_TITLE;
+        CakeDTO cakeWithNoTitle = TestUtils.CAKE_DTO_WITH_NO_ID_NO_TITLE;
 
-        CakeManagerException exception = assertThrows(CakeManagerException.class,() -> cakeManagerValidator.validateCake(cakeWithNoTitle, CakeAction.CREATE));
+        CakeManagerException exception = assertThrows(CakeManagerException.class,() -> cakeManagerValidator.validate(cakeWithNoTitle, CakeAction.CREATE));
         assertThat(exception.getMessage()).isEqualTo("Title is required. ");
     }
 
     @Test
     public void givenValidateCakeCreationWithCakeWithNoDescriptionThenThrowCakeManagerException(){
-        CakeDTO cakeWithNoDescription = CakeDTO.builder().title("Lemon cheesecake").imageURL("https://s3-eu-west-1.amazonaws.com/s3.mediafileserver.co.uk/carnation/WebFiles/RecipeImages/lemoncheesecake_lg.jpg").build();
+        CakeDTO cakeWithNoDescription = TestUtils.CAKE_DTO_WITH_NO_ID_NO_DESCRIPTION;
 
-        CakeManagerException exception = assertThrows(CakeManagerException.class,() -> cakeManagerValidator.validateCake(cakeWithNoDescription, CakeAction.CREATE));
+        CakeManagerException exception = assertThrows(CakeManagerException.class,() -> cakeManagerValidator.validate(cakeWithNoDescription, CakeAction.CREATE));
         assertThat(exception.getMessage()).isEqualTo("Description is required. ");
     }
 
     @Test
     public void givenValidateCakeCreationWithCakeWithNoImageURLThenThrowCakeManagerException(){
-        CakeDTO cakeWithNoDescription = CakeDTO.builder().title("Lemon cheesecake").description("A cheesecake made of lemon").build();
+        CakeDTO cakeWithNoUrl = TestUtils.CAKE_DTO_WITH_NO_ID_NO_URL;
 
-        CakeManagerException exception = assertThrows(CakeManagerException.class,() -> cakeManagerValidator.validateCake(cakeWithNoDescription, CakeAction.CREATE));
+        CakeManagerException exception = assertThrows(CakeManagerException.class,() -> cakeManagerValidator.validate(cakeWithNoUrl, CakeAction.CREATE));
         assertThat(exception.getMessage()).isEqualTo("ImageUrl is required. ");
     }
 
     @Test
     public void givenUpdateCakeWithNoIdThenThrowCakeManagerException(){
-        CakeManagerException exception = assertThrows(CakeManagerException.class,() -> cakeManagerValidator.validateCake(TestUtils.CAKE_DTO_WITH_NO_ID, CakeAction.UPDATE));
+        CakeManagerException exception = assertThrows(CakeManagerException.class,() -> cakeManagerValidator.validate(TestUtils.CAKE_DTO_WITH_NO_ID, CakeAction.UPDATE));
         assertThat(exception.getMessage()).isEqualTo("Id is required. ");
     }
-
 }

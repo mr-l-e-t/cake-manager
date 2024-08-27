@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   cake-db:
-    image: postgres:16
+    image: postgres:16.4
     ports:
       - "5432:5432"
     environment:

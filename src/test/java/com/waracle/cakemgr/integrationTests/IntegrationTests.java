@@ -49,7 +49,7 @@ public class IntegrationTests {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string(TestUtils.getTwoCakeListAsJson()));
 
-        verify(cakeRepository,times(1)).findAll();
+        verify(cakeRepository).findAll();
     }
 
     @Test
@@ -66,7 +66,7 @@ public class IntegrationTests {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string(TestUtils.getSingleCakeAsJson()));
 
-        verify(cakeRepository,times(1)).getReferenceById(1);
+        verify(cakeRepository).getReferenceById(1);
     }
 
     @Test
@@ -85,7 +85,6 @@ public class IntegrationTests {
 
     @Test
     public void givenCallingGetCakesWithNonNumericParameterThenReturnErrorStatus400_BadRequest() throws Exception{
-
         RequestBuilder request = MockMvcRequestBuilders
                 .get("/api/cake/aaa")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -117,7 +116,7 @@ public class IntegrationTests {
         ArgumentCaptor<CakeEntity> capturedTransaction = ArgumentCaptor.forClass(CakeEntity.class);
 
         Mockito.verify(cakeRepository).save(capturedTransaction.capture());
-        assertEquals(TestUtils.CAKE_DTO_WITH_NO_ID.getTitle(), capturedTransaction.getValue().getTitle());
+        assertEquals(TestUtils.CAKE_DTO_WITH_NO_ID.title(), capturedTransaction.getValue().getTitle());
     }
 
     @Test
@@ -132,11 +131,12 @@ public class IntegrationTests {
         mockMvc.perform(request)
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(TestUtils.getInternalServerErrorValidationErrorIDPresentInCakeObjectAsJson()));;
+                .andExpect(content().string(TestUtils.getInternalServerErrorValidationErrorIDPresentInCakeObjectAsJson()));
     }
+
     @Test
     public void givenCallToCreateCakeEndpointWithJsonCakeWithNoTitleThenReturn500Code() throws Exception {
-        CakeDTO cakeWithNoTitle = TestUtils.CAKE_DTO_WITH_NO_TITLE;
+        CakeDTO cakeWithNoTitle = TestUtils.CAKE_DTO_WITH_NO_ID_NO_TITLE;
         RequestBuilder request = MockMvcRequestBuilders
                 .post("/api/cake")
                 .content(TestUtils.asJsonString(cakeWithNoTitle))
@@ -146,7 +146,7 @@ public class IntegrationTests {
         mockMvc.perform(request)
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(TestUtils.getInternalServerErrorValidationErrorMissingTitleAsJson()));;
+                .andExpect(content().string(TestUtils.getInternalServerErrorValidationErrorMissingTitleAsJson()));
     }
 
     @Test
@@ -166,6 +166,7 @@ public class IntegrationTests {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string(TestUtils.getInternalServerErrorJson()));;
     }
+
     @Test
     public void givenCallToCreateCakeEndpointThenThrowRuntimeExceptionAndReturn500Code() throws Exception {
         CakeDTO cakeToCreate = TestUtils.CAKE_DTO_WITH_NO_ID;
@@ -193,7 +194,7 @@ public class IntegrationTests {
         when(cakeRepository.save(any(CakeEntity.class))).thenReturn(TestUtils.CAKE_ENTITY);
 
         RequestBuilder request = MockMvcRequestBuilders
-                .put("/api/cake")
+                .put("/api/cake/1")
                 .content(TestUtils.asJsonString(cakeToUpdate))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
@@ -206,14 +207,14 @@ public class IntegrationTests {
         ArgumentCaptor<CakeEntity> capturedTransaction = ArgumentCaptor.forClass(CakeEntity.class);
 
         Mockito.verify(cakeRepository).save(capturedTransaction.capture());
-        assertEquals(TestUtils.CAKE_DTO_WITH_NO_ID.getTitle(), capturedTransaction.getValue().getTitle());
+        assertEquals(TestUtils.CAKE_DTO_WITH_NO_ID.title(), capturedTransaction.getValue().getTitle());
     }
 
     @Test
     public void givenCallToUpdateCakeWithNoIDThenThenReturn500Code() throws Exception {
         CakeDTO cakeToUpdateWithNoID = TestUtils.CAKE_DTO_WITH_NO_ID;
         RequestBuilder request = MockMvcRequestBuilders
-                .put("/api/cake")
+                .put("/api/cake/1")
                 .content(TestUtils.asJsonString(cakeToUpdateWithNoID))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
@@ -230,7 +231,7 @@ public class IntegrationTests {
         CakeDTO cakeToUpdate= TestUtils.CAKE_DTO;
 
         RequestBuilder request = MockMvcRequestBuilders
-                .put("/api/cake")
+                .put("/api/cake/1")
                 .content(TestUtils.asJsonString(cakeToUpdate))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);

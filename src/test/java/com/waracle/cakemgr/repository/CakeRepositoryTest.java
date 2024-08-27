@@ -13,8 +13,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class) //integrates the Spring test context framework into the JUnit 5 Jupiter programming model.
-@DataJpaTest //will only load the Spring Data JPA slice of the Spring context. This integration test as an external database is used
+@ExtendWith(SpringExtension.class)//integrates the Spring test context framework into the JUnit 5 Jupiter programming model.
+@DataJpaTest//will only load the Spring Data JPA slice of the Spring context. This integration test as an external database is used
 public class CakeRepositoryTest {
 
     @Autowired

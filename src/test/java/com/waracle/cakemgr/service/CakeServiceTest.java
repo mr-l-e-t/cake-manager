@@ -18,23 +18,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CakeServiceTest {
-
     @Mock
     private CakeRepository cakeRepository;
 
     @Mock
     private CakeMapper cakeMapper;
+
     @Captor
-    private ArgumentCaptor<CakeEntity> captor;
+    private ArgumentCaptor<List<CakeEntity>> cakeEntitiesCaptor;//type of argument  I intend to capture when  calling entitiesToDTOs()
+    @Captor
+    private ArgumentCaptor<CakeEntity> cakeEntityCaptor;//type of argument  I intend to capture when  calling entityToDTO()
+    @Captor
+    private ArgumentCaptor<CakeDTO> cakeDTOCaptor;//type of argument  I intend to capture when  calling dtoToEntity()
 
     @Autowired
     @InjectMocks //the annotation will initialize the CakeServiceImpl object with the CakeRepository mock
     private CakeServiceImpl cakeService;
+
     private List<CakeEntity> cakeEntitiesThatWillBeRetrievedFromRepository;
     private List<CakeDTO> cakeDTOsExpectedFromService;
     private CakeDTO cakeDTOExpectedFromService;
@@ -45,9 +51,10 @@ public class CakeServiceTest {
     private CakeEntity cakeEntityThatWillBeRetrievedFromRepository;
 
     private CakeEntity cakeEntityToBeSavedInCreateCake;
-    private CakeEntity cakeEntityToBeUpdated;
+//    private CakeEntity cakeEntityToBeUpdated;
 
     private static final int CAKE_ID = 1;
+
 
     @BeforeEach
     public void setUp(){
@@ -57,9 +64,10 @@ public class CakeServiceTest {
 
         cakeDTOsExpectedFromService = TestUtils.TWO_CAKE_LIST_WITH_ID;
         cakeDTOExpectedFromService = TestUtils.CAKE_DTO;
-        cakeDTOToBeCreated =  TestUtils.CAKE_DTO_WITH_NO_ID;
+        cakeDTOToBeCreated =  TestUtils.CAKE_DTO;
         cakeDTOToBeUpdated = TestUtils.CAKE_DTO;
     }
+
     @AfterEach
     public void tearDown(){
         cakeEntitiesThatWillBeRetrievedFromRepository = null;
@@ -75,46 +83,57 @@ public class CakeServiceTest {
     public void givenGetAllCakesShouldReturnListOfAllCakes(){
         //given
         when(cakeRepository.findAll()).thenReturn(cakeEntitiesThatWillBeRetrievedFromRepository);
-        when(cakeMapper.toCakeDTO(cakeEntitiesThatWillBeRetrievedFromRepository.get(0))).thenReturn(cakeDTOsExpectedFromService.get(0));
-        when(cakeMapper.toCakeDTO(cakeEntitiesThatWillBeRetrievedFromRepository.get(1))).thenReturn(cakeDTOsExpectedFromService.get(1));
+        when(cakeMapper.entitiesToDTOs(cakeEntitiesThatWillBeRetrievedFromRepository)).thenReturn(cakeDTOsExpectedFromService);
+
 
         //then return list of cakes
         List<CakeDTO> cakesFromService =cakeService.getAllCakes();
         //assert all results are as expected, and all parameters passed are as expected
         assertEquals(cakeDTOsExpectedFromService,cakesFromService);
 
-        verify(cakeRepository,times(1)).findAll();
-        verify(cakeMapper, times(2)).toCakeDTO(captor.capture());
+        verify(cakeRepository).findAll();
+        verify(cakeMapper).entitiesToDTOs(cakeEntitiesCaptor.capture()); //capture the argument passed to entitiesToDTOs()
 
-        assertEquals(captor.getAllValues().get(0), cakeEntitiesThatWillBeRetrievedFromRepository.get(0));
-        assertEquals(captor.getAllValues().get(1), cakeEntitiesThatWillBeRetrievedFromRepository.get(1));
+        //inspect the capture argument that was passed to entitiesToDTOs()
+        assertArrayEquals(cakeEntitiesThatWillBeRetrievedFromRepository.toArray(),  cakeEntitiesCaptor.getValue().toArray());
     }
 
     @Test
     public void givenGetCakeWithIdThenReturnSingleCake(){
         //given
         when(cakeRepository.getReferenceById(CAKE_ID)).thenReturn(cakeEntityThatWillBeRetrievedFromRepository);
-        when(cakeMapper.toCakeDTO(cakeEntityThatWillBeRetrievedFromRepository)).thenReturn(cakeDTOExpectedFromService);
+        when(cakeMapper.entityToDTO(cakeEntityThatWillBeRetrievedFromRepository)).thenReturn(cakeDTOExpectedFromService);
 
         //then return single cake
         CakeDTO cakeFromService = cakeService.getCake(CAKE_ID);
         assertEquals(cakeDTOExpectedFromService,cakeFromService);
 
-        verify(cakeRepository,times(1)).getReferenceById(CAKE_ID);
+        //check that the functions are called
+        verify(cakeRepository).getReferenceById(CAKE_ID);
+        verify(cakeMapper).entityToDTO(cakeEntityCaptor.capture());//capture the argument passed
+
+        //assert the argument passed is what we expected
+        assertEquals(cakeEntityThatWillBeRetrievedFromRepository, cakeEntityCaptor.getValue());
     }
 
     @Test
     public void givenCreateCakeThenReturnCreatedCake(){
         //given
         when(cakeRepository.save(any(CakeEntity.class))).thenReturn(cakeEntityThatWillBeRetrievedFromRepository);
-        when(cakeMapper.toCakeEntity(any(CakeDTO.class))).thenReturn(cakeEntityToBeSavedInCreateCake);
-        when(cakeMapper.toCakeDTO(any(CakeEntity.class))).thenReturn(cakeDTOExpectedFromService);
+        when(cakeMapper.dtoToEntity(any(CakeDTO.class))).thenReturn(cakeEntityToBeSavedInCreateCake);
+        when(cakeMapper.entityToDTO(any(CakeEntity.class))).thenReturn(cakeDTOToBeCreated);
 
         //then return single cake
         CakeDTO savedCake = cakeService.save(cakeDTOToBeCreated);
         assertEquals(cakeDTOExpectedFromService,savedCake);
 
-        verify(cakeRepository,times(1)).save(cakeEntityToBeSavedInCreateCake);
+        verify(cakeRepository).save(cakeEntityToBeSavedInCreateCake);
+        verify(cakeMapper).dtoToEntity(cakeDTOCaptor.capture());
+        verify(cakeMapper).entityToDTO(cakeEntityCaptor.capture());//capture the argument passed
+
+        //assert the argument passed is what we expected
+        assertEquals(cakeDTOToBeCreated, cakeDTOCaptor.getValue());
+        assertEquals(cakeEntityThatWillBeRetrievedFromRepository, cakeEntityCaptor.getValue());
     }
 
     @Test
@@ -122,14 +141,18 @@ public class CakeServiceTest {
         //given
         when(cakeRepository.getReferenceById(CAKE_ID)).thenReturn(cakeEntityThatWillBeRetrievedFromRepository);
         when(cakeRepository.save(any(CakeEntity.class))).thenReturn(cakeEntityThatWillBeRetrievedFromRepository);
-        when(cakeMapper.toCakeDTO(any(CakeEntity.class))).thenReturn(cakeDTOToBeUpdated);
+        when(cakeMapper.entityToDTO(any(CakeEntity.class))).thenReturn(cakeDTOToBeUpdated);
 
 
         //then return single cake
         CakeDTO updatedCake = cakeService.update(cakeDTOToBeUpdated);
         assertEquals(cakeDTOExpectedFromService,updatedCake);
 
-        verify(cakeRepository,times(1)).save(cakeEntityThatWillBeRetrievedFromRepository);
+        verify(cakeRepository).save(cakeEntityThatWillBeRetrievedFromRepository);
+        verify(cakeMapper).entityToDTO(cakeEntityCaptor.capture());//capture the argument passed
+
+        //assert the argument passed is what we expected
+        assertEquals(cakeEntityThatWillBeRetrievedFromRepository, cakeEntityCaptor.getValue());
     }
 
     @Test
@@ -140,6 +163,6 @@ public class CakeServiceTest {
         //then return single cake
         cakeService.delete(CAKE_ID);
 
-        verify(cakeRepository,times(1)).deleteById(CAKE_ID);
+        verify(cakeRepository).deleteById(CAKE_ID);
     }
 }

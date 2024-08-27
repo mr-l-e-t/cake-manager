@@ -12,47 +12,45 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class CakeServiceImpl implements CakeService {
+public final class CakeServiceImpl implements CakeService{
+//public class CakeServiceImpl implements CakeService{
 
-    @Autowired
-    private CakeRepository cakeRepository;
     @Autowired
     private CakeMapper cakeMapper;
 
+    @Autowired
+    CakeRepository cakeRepository;
+
     @Override
     public List<CakeDTO> getAllCakes() {
-        return cakeRepository.findAll().stream().map(cakeMapper::toCakeDTO).toList();
+        return cakeMapper.entitiesToDTOs(cakeRepository.findAll());
     }
 
     @Override
     public CakeDTO getCake(int id) {
-        CakeEntity cakeFromDB =cakeRepository.getReferenceById(id);
-
-        return cakeMapper.toCakeDTO(cakeFromDB);
+        return cakeMapper.entityToDTO(cakeRepository.getReferenceById(id));
     }
 
     @Override
     public CakeDTO save(CakeDTO cakeToSave) {
         log.info("cake to save: {}",cakeToSave);
-        CakeEntity cakeCreated = cakeRepository.save(cakeMapper.toCakeEntity(cakeToSave));
+        CakeEntity cakeCreated = cakeRepository.save(cakeMapper.dtoToEntity(cakeToSave));
 
         log.info("cakeCreated: {}",cakeCreated);
-
-        return cakeMapper.toCakeDTO(cakeCreated);
+        return cakeMapper.entityToDTO(cakeCreated);
     }
 
     @Override
     public CakeDTO update(CakeDTO cakeToUpdate) {
-
         log.info("cake to update: {}",cakeToUpdate);
-        CakeEntity cakeFromDB =cakeRepository.getReferenceById(cakeToUpdate.getId());
-        cakeFromDB.setTitle(cakeToUpdate.getTitle());
-        cakeFromDB.setDescription(cakeToUpdate.getDescription());
-        cakeFromDB.setImageURL(cakeToUpdate.getImageURL());
+        CakeEntity cakeFromDB =cakeRepository.getReferenceById(cakeToUpdate.id());
+        cakeFromDB.setTitle(cakeToUpdate.title());
+        cakeFromDB.setDescription(cakeToUpdate.description());
+        cakeFromDB.setImageURL(cakeToUpdate.imageURL());
         cakeFromDB = cakeRepository.save(cakeFromDB);
         log.info("cake updated: {}",cakeFromDB);
 
-        return cakeMapper.toCakeDTO(cakeFromDB);
+        return cakeMapper.entityToDTO(cakeFromDB);
     }
 
     @Override

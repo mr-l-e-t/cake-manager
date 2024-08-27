@@ -2,6 +2,7 @@ package com.waracle.cakemgr.controller;
 
 import com.waracle.cakemgr.TestUtils;
 import com.waracle.cakemgr.service.CakeService;
+import com.waracle.cakemgr.service.CakeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,12 +19,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CakesControllerTest {
+public class CakesControllerTest {
+
     @Autowired
     private MockMvc mockMvc;
 
     @Mock
-    private CakeService cakeService;
+    private CakeServiceImpl cakeService;//mocking class implementation since it is not possible to mock sealed interfaces
 
     @InjectMocks
     private CakesController cakesController;
@@ -41,6 +43,5 @@ class CakesControllerTest {
                         content(TestUtils.getTwoCakeListAsJson())).
                 andDo(MockMvcResultHandlers.print());
         verify(cakeService).getAllCakes();
-        verify(cakeService,times(1)).getAllCakes();
     }
 }
