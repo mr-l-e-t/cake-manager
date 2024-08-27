@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: cake-manager
-          image: cake-manager-service-docker-image:2.0.0
+          image: cake-manager-service-docker-image:1.0.0
           imagePullPolicy: Never # this is for local development - it prevents the image from being pulled from a registry
           env:
             - name: SPRING_PROFILES_ACTIVE
@@ -44,7 +44,7 @@ spec:
     spec:
       containers:
         - name: cake-db
-          image: postgres:16
+          image: postgres:16.4
           env:
             - name: POSTGRES_USER
               value: postgres

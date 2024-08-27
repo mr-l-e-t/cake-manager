@@ -14,7 +14,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestControllerAdvice
 @Slf4j
 public class ExceptionHandlerRestControllerAdviser {
-
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ErrorDTO> handleEntityNotFoundException(EntityNotFoundException ex) {
@@ -55,6 +54,6 @@ public class ExceptionHandlerRestControllerAdviser {
 
 
     private static ResponseEntity<ErrorDTO> getNewErrorResponseWith(HttpStatus status, String errorMessage){
-        return new ResponseEntity<>(ErrorDTO.builder().code(status.toString()).message(errorMessage).build(), status);
+        return new ResponseEntity<>(new ErrorDTO(status.toString(), errorMessage), status);
     }
 }

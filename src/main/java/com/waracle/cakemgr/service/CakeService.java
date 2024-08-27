@@ -4,7 +4,12 @@ import com.waracle.cakemgr.dto.CakeDTO;
 
 import java.util.List;
 
-public interface CakeService {
+public sealed interface CakeService permits CakeServiceImpl{
+//public interface CakeService {
+        /**
+         * Retrieve all cakes and map directly into cake record
+         * @return
+         */
     List<CakeDTO> getAllCakes();
 
     CakeDTO getCake(int id);

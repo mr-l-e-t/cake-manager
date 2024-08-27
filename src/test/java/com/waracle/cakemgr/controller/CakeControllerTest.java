@@ -1,9 +1,8 @@
 package com.waracle.cakemgr.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.waracle.cakemgr.TestUtils;
 import com.waracle.cakemgr.dto.CakeDTO;
-import com.waracle.cakemgr.service.CakeService;
+import com.waracle.cakemgr.service.CakeServiceImpl;
 import com.waracle.cakemgr.validator.CakeAction;
 import com.waracle.cakemgr.validator.CakeManagerValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,8 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.Optional;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Errors;
 
 import static org.mockito.Mockito.*;
 
@@ -30,7 +29,7 @@ public class CakeControllerTest {
     private MockMvc mockMvc;
 
     @Mock
-    private CakeService cakeService;
+    private CakeServiceImpl cakeService;
 
     @Mock
     private CakeManagerValidator cakeManagerValidator;
@@ -51,33 +50,31 @@ public class CakeControllerTest {
                         content(TestUtils.getSingleCakeAsJson())).
                 andDo(MockMvcResultHandlers.print());
         verify(cakeService).getCake(1);
-        verify(cakeService,times(1)).getCake(1);
     }
-
     @Test
     public void givenCallToCreateCakeThenReturnCakeWithID() throws Exception{
 
         when(cakeService.save(any(CakeDTO.class))).thenReturn(TestUtils.CAKE_DTO);
-        when(cakeManagerValidator.validateCake(any(CakeDTO.class), any(CakeAction.class))).thenReturn(Optional.empty());
+
         mockMvc.perform(MockMvcRequestBuilders.post("/api/cake").
                         contentType(MediaType.APPLICATION_JSON).
                         content(TestUtils.getSingleCakeAsJson())).
                 andDo(MockMvcResultHandlers.print());
+
+        verify(cakeManagerValidator).validate(TestUtils.CAKE_DTO, CakeAction.CREATE);
         verify(cakeService).save(TestUtils.CAKE_DTO);
-        verify(cakeService,times(1)).save(TestUtils.CAKE_DTO);
     }
 
     @Test
     public void givenCallToUpdateCakeThenUpdateCake() throws Exception {
 
         when(cakeService.update(any(CakeDTO.class))).thenReturn(TestUtils.CAKE_DTO);
-//        when(cakeManagerValidator.validateCakeUpdate(any(CakeDTO.class))).thenReturn(Optional.empty());
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/cake").
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/cake/1").
                         contentType(MediaType.APPLICATION_JSON).
                         content(TestUtils.getSingleCakeAsJson())).
                 andDo(MockMvcResultHandlers.print());
         verify(cakeService).update(TestUtils.CAKE_DTO);
-        verify(cakeService,times(1)).update(TestUtils.CAKE_DTO);
+        verify(cakeManagerValidator).validate(TestUtils.CAKE_DTO, CakeAction.UPDATE);
     }
 
     @Test
@@ -88,6 +85,5 @@ public class CakeControllerTest {
                         content(TestUtils.getSingleCakeAsJson())).
                 andDo(MockMvcResultHandlers.print());
         verify(cakeService).delete(1);
-        verify(cakeService,times(1)).delete(1);
     }
 }
